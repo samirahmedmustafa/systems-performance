@@ -18,7 +18,7 @@ Everyone wants to learn about Systems Performance
 
 ## Labs
 
-* [lab](docs/1-lab1.md)
+* [Not ready](docs/not_ready.md)
 
 Resources:
 
