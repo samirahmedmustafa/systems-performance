@@ -1,4 +1,4 @@
-# Cmake tutorials
+# Systems Performance
 
 This tutorial is based on Systems Performance book by Brendan Gregg
 
