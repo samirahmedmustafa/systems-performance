@@ -14,6 +14,7 @@ Everyone wants to learn about Systems Performance
 * sysstat
 * perf
 * trace-cmd
+* gcc, glibc, gdb
 * vi editor
 
 ## Labs
