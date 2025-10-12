@@ -12,6 +12,8 @@ Everyone wants to learn about Systems Performance
 * bcc-tools
 * bpftrace
 * sysstat
+* perf
+* trace-cmd
 * vi editor
 
 ## Labs
