@@ -8,7 +8,7 @@ In this lab, I will experiment with perf for checking the on-cpu most impacting 
   /usr/bin/unzip: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=75192522294cd5688ad436362acfaf737d426d40, for GNU/Linux 3.2.0,     stripped
   ```
 
-  starting the investigation
+Starting the investigation using the native unzip command
 
   `top` command
 
