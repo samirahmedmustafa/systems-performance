@@ -21,8 +21,8 @@ In this lab, I will experiment with perf for checking the on-cpu most impacting 
   MiB Swap:   1024.0 total,    932.2 free,     91.8 used.   2978.5 avail Mem
   
       PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
-**    54650 postgres  20   0    5296   4224   2048 R  93.8   0.1   0:15.09 unzip
-**        1 root      20   0  175088  11240   6100 S   0.0   0.3   0:07.99 systemd
+      54650 postgres  20   0    5296   4224   2048 R  93.8   0.1   0:15.09 **unzip**
+        1 root      20   0  175088  11240   6100 S   0.0   0.3   0:07.99 systemd
         2 root      20   0       0      0      0 S   0.0   0.0   0:00.57 kthreadd
         3 root      20   0       0      0      0 S   0.0   0.0   0:00.00 pool_workqueue_
         4 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/R-rcu_g
