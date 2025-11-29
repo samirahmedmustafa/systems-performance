@@ -19,7 +19,7 @@ Everyone wants to learn about Systems Performance
 
 ## Labs
 
-* [Not ready](docs/not_ready.md)
+* [1-perf-oncpu-flamegraph](doc/1-perf-oncpu.md)
 
 Resources:
 
