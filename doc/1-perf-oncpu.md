@@ -81,12 +81,61 @@ procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
     06:09:54 PM       0     76.00      0.00     23.00      1.00      0.00      0.00
     06:09:54 PM       1      1.00      0.00     10.00      1.00      0.00     88.00
 ```
-
+```
   Observations:
   - Minimal IO wait
   - CPU 0 is loaded while CPU 1 is idle most of the time (less than 20% CPU1 and more than 60% CPU0)
 
-Here is another proof that unzip is single threaded after enabling number of threads in `top` command (press f to get the list of options, then go down to `nTH` enable it using space then `ESC` to go back to the top screen)
+4. Check network status
+   
+   ```
+   sar -n DEV 1
+    Linux 5.14.0-503.14.1.el9_5.x86_64 (pgserver)   11/28/2025      _x86_64_        (2 CPU)
+    
+    06:09:20 PM     IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s   %ifutil
+    06:09:21 PM        lo      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+    06:09:21 PM    enp1s0      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+    06:09:21 PM    enp9s0    599.00   1199.00     38.61    158.18      0.00      0.00      0.00      0.00
+    
+    06:09:21 PM     IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s   %ifutil
+    06:09:22 PM        lo      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+    06:09:22 PM    enp1s0      1.00      0.00      0.05      0.00      0.00      0.00      0.00      0.00
+    06:09:22 PM    enp9s0    667.00   1330.00     43.01    175.82      0.00      0.00      0.00      0.00
+    
+    06:09:22 PM     IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s   %ifutil
+    06:09:23 PM        lo      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+    06:09:23 PM    enp1s0      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+    06:09:23 PM    enp9s0    717.00   1433.00     46.25    189.93      0.00      0.00      0.00      0.00
+   ```
+
+   Observations:
+   - Very mimimum network utilization
+
+5. Check disks status
+
+   ```
+   [root@pgserver FlameGraph]# sar -d 1
+    Linux 5.14.0-503.14.1.el9_5.x86_64 (pgserver)   11/28/2025      _x86_64_        (2 CPU)
+    
+    05:43:15 PM       DEV       tps     rkB/s     wkB/s     dkB/s   areq-sz    aqu-sz     await     %util
+    05:43:16 PM       vda      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+    05:43:16 PM       vdb    199.00 133264.00   1449.00      0.00    676.95      0.25      1.18      5.90
+    05:43:16 PM      dm-0      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+    05:43:16 PM      dm-1      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+    05:43:16 PM      dm-2    119.00 133264.00   1449.00      0.00   1132.04      0.12      0.99      5.90
+    
+    05:43:16 PM       DEV       tps     rkB/s     wkB/s     dkB/s   areq-sz    aqu-sz     await     %util
+    05:43:17 PM       vda      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+    05:43:17 PM       vdb    503.00 119752.00 310476.00      0.00    855.32      2.90      5.68     17.00
+    05:43:17 PM      dm-0      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+    05:43:17 PM      dm-1      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+    05:43:17 PM      dm-2   1626.00 119752.00 310476.00      0.00    264.59     11.06      6.80     17.00
+   ```
+
+   Observations:
+   - Minimum disk utilization 17%
+   
+You can enable number of threads to check whether the process is multithreaded or no. For enabling number of threads in `top` command (press f to get the list of options, then go down to `nTH` enable it using space then `ESC` to go back to the top screen)
 
 ```
     top - 18:25:07 up 4 days, 55 min,  3 users,  load average: 0.22, 0.10, 0.14
@@ -105,3 +154,21 @@ Here is another proof that unzip is single threaded after enabling number of thr
     55017 root      20   0       0      0      0 I   1.0   0.0   0:00.08 kworker/1:1-events_freezable_pwr_ef                                                  1
     54951 root      20   0       0      0      0 I   0.7   0.0   0:00.64 kworker/0:8-events_power_efficient                                                   1
 ```
+
+6. Checking On-cpu using perf command
+
+```
+perf record -F 99 -a -g -- sleep 10
+perf script --header > oncpuout.stacks
+git clone https://github.com/brendangregg/FlameGraph; cd FlameGraph
+./stackcollapse-perf.pl < ../oncpuout.stacks | ./flamegraph.pl --hash > /tmp/oncpu_stripped.svg
+```
+
+Observations:
+
+- According to the below snapshot the unzip command is taking 86% of the CPU time (but that is not showing stacktrace of the internal functions inside `unzip` which are causing the 86%)
+<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/7549855e-391f-4f30-a0e2-3ce2b986d656" />
+
+
+
+
