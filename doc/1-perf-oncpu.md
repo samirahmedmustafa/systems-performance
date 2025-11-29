@@ -166,9 +166,12 @@ git clone https://github.com/brendangregg/FlameGraph; cd FlameGraph
 
 Observations:
 
-- According to the below snapshot the unzip command is taking 86% of the CPU time (but that is not showing stacktrace of the internal functions inside `unzip` which are causing the 86%)
+- According to the below flamegraph snapshot the unzip command is taking 86% of the CPU time (but that is not showing stacktrace of the internal functions inside `unzip` which are causing the 86%)
 <img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/7549855e-391f-4f30-a0e2-3ce2b986d656" />
 
 
+7. I download unzip source code and managed to compile it introducing the options `-g -fno-omit-frame-pointer` and got the below flamegraph
+   <img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/581bc961-4223-4d42-83ee-ecb28ed6888e" />
 
 
+That's the recompile way of getting the flame graph stack complete info, the other one is using the debuginfo
